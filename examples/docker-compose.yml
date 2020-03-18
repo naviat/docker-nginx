@@ -1,0 +1,28 @@
+version: '3.7'
+services:
+  
+  nginx-app:
+    image: registry.selfdesign.org/docker/nginx
+    container_name: nginx-app
+    labels:
+      - traefik.enable=true
+      - traefik.frontend.rule=Host:nginx.example.com
+      - traefik.port=80
+      - traefik.protocol=http
+      - traefik.docker.network=proxy
+      - traefik.backend=nginx-app
+    volumes:
+      - ./data:/www/html
+      - ./logs:/www/logs
+    environment:
+      - ZABBIX_HOSTNAME=nginx-ldap-app
+    networks:
+      - proxy
+      - services
+    restart: always
+
+networks:
+  proxy:
+    external: true
+  services:
+    external: true
